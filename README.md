@@ -10,6 +10,7 @@ zjblog是一个博客程序，采用mysql数据库，基于django搭建。
 	django-simple-captcha
 
 zjblog的安装方法：
+
 1、settings.py文件中如下设置：
 
 	INSTALLED_APPS = (
