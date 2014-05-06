@@ -12,10 +12,10 @@ zjblog是一个博客程序，采用mysql数据库，基于django搭建。
 zjblog的安装方法：
 1、settings.py文件中如下设置：
 
-INSTALLED_APPS = (
-    ...
-    'zjblog',
-    )
+	INSTALLED_APPS = (
+    			...
+    			'zjblog',
+    	)
 
 2、mysite目录下的urls.py中，如下设置：
 
