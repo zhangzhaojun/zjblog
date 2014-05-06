@@ -20,12 +20,11 @@ zjblog的安装方法：
 
 2、mysite目录下的urls.py中，如下设置：
 
-urlpatterns = patterns('',
-
-    ...
-    (r'^blogs/', include('zjblog.urls')),
-    ...
-)
+	urlpatterns = patterns('',
+			...
+    			(r'^blogs/', include('zjblog.urls')),
+    			...
+	)
 
 许可声明：
 
