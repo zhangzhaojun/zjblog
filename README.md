@@ -25,3 +25,8 @@ urlpatterns = patterns('',
     (r'^blogs/', include('zjblog.urls')),
     ...
 )
+
+许可声明：
+
+	The MIT License (MIT)
+	Copyright (c) 2014 zhangzhaojun
