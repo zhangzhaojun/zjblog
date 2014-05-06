@@ -1,0 +1,90 @@
+# -*- coding: utf-8 -*-
+
+from django.db import models
+
+from mptt.models import MPTTModel, TreeForeignKey
+from taggit.managers import TaggableManager
+import datetime
+
+class Category(models.Model):
+    title = models.CharField(u'分类', max_length=50)
+    class Meta:
+        verbose_name = u'分类'
+        verbose_name_plural = u'分类'
+        ordering = ['title']
+
+    def get_absolute_url(self):
+        return "/category/%i/" % self.id
+
+    def __unicode__(self):
+        return self.title
+
+class FriendLink(models.Model):
+    title = models.CharField(u'网站名称', max_length=50, help_text=u'给友情链接取一个名字')
+    url =models.URLField(u'网站地址', help_text=u'友情链接的网址')
+    class Meta:
+        verbose_name = u'友情链接'
+        verbose_name_plural = u'友情链接'
+    
+    def __unicode__(self):
+        return self.title
+
+class BaseInformation(models.Model):
+    title = models.CharField(u'网站标题', max_length=100, help_text=u'浏览器顶部显示的内容')
+    keywords = models.CharField(u'关键词', max_length=100, help_text=u'提供给搜索引擎的内容。关键词之间用英文逗号分隔')
+    description = models.CharField(u'网站描述', max_length=100, help_text=u'提供给搜索引擎的内容。主要说明网站的用途')
+    ico_url =models.URLField(u'图标地址', help_text=u'显示在浏览器地址栏中的图标的链接地址')
+    log_url =models.URLField(u'logo地址', help_text=u'logo的链接地址')
+    blog_name = models.CharField(u'博客名称', max_length=50)
+    mark = models.CharField(u'个性签名', max_length=100)
+    content = models.TextField(u'自我介绍')
+    copyrightby = models.CharField(u'版权声明', max_length=100)
+    my_template = models.CharField(u'当前所用主题', max_length=100)
+    class Meta:
+        verbose_name = u'网站基本设置'
+        verbose_name_plural = u'网站基本设置'
+
+    def __unicode__(self):
+        return self.title
+    
+
+class Blog(models.Model):
+    class Meta:
+        verbose_name = u'日志'
+        verbose_name_plural = u'日志'
+        ordering = ['-pub_date']
+        
+    title = models.CharField(u'标题', max_length=50)
+    describe = models.TextField(u'简介', blank=True)
+    content = models.TextField(u'内容', help_text=u'上面填入详细内容')
+    smallimage = models.URLField(u'配图', blank=True, help_text=u'配图的链接地址')
+    pub_date = models.DateTimeField(u'写于', default=datetime.datetime.now)
+    category =models.ForeignKey(Category, verbose_name=u'日志分类')
+    #tag = TagField(u'标签', help_text=u'多个标签之间用空格分隔')
+    tags = TaggableManager(u'标签', help_text=u'多个标签之间用英文逗号分隔')
+    hotcount = models.IntegerField(u'热度', default=1, help_text=u'用于检索热门文章')
+    commentcount = models.IntegerField(u'评论', default=0)
+    def get_absolute_url(self):
+        return "/blog/%i/" % self.id
+
+    def __unicode__(self):
+        return self.title
+
+class ZComments(MPTTModel):
+    r_blog = models.ForeignKey(Blog, verbose_name=u'评论的日志')
+    c_author = models.CharField(u'评论者', max_length=60)
+    e_mail = models.EmailField(u'邮箱')
+    url = models.URLField(u'网址')
+    content = models.TextField(u'内容')
+    pub_date = models.DateTimeField(u'写于', default=datetime.datetime.now)
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
+
+    class Meta:
+        verbose_name = u'评论'
+        verbose_name_plural = u'评论'
+        
+    class MPTTMeta:
+        
+        order_insertion_by = ['pub_date']
+
+        

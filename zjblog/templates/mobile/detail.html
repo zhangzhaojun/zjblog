@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+
+{% load staticfiles %}
+{% load gravatar %}
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{base_information.description}}">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="{{base_information.ico_url}}">
+
+    <title>{{ post.title }}|{{ base_information.title }}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'zjblog/mobile/style/blog.css' %}" rel="stylesheet">
+
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  <style id="holderjs-style" type="text/css"></style>
+<script type="text/javascript" src="{% static 'zjblog/mobile/js/jquery.min.js' %}"></script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+  $("[href='#tosomeone']").click(function(){
+  var name=$(this).attr("name");
+  var id=$(this).attr("id");
+  $("#id_commentbox").val("对"+name+"说：");
+  $("#parent_id").val(id);
+  });
+
+  $("#cancel").click(function(){
+       
+       $("#parent_id").val("");
+  });
+});
+
+</script>
+
+
+</head>
+
+  <body>
+
+    <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item active" href="/">主页</a>{% for hCategory in category_list %}
+          <a class="blog-nav-item" href="../../../blogs{{ hCategory.get_absolute_url }}">{{ hCategory.title }}</a>{% endfor %}
+          
+        </nav>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="blog-header">
+      <img src="{% static 'zjblog/mobile/style/images/img03.gif' %}" class="img-responsive" style="float:left">
+        <h1 class="blog-title">{{ base_information.blog_name }}</h1>
+        <p class="lead blog-description">——{{ base_information.mark }}</p>
+        
+      </div>
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+          <div class="blog-post">
+            <h2 class="blog-post-title">{{ post.title }}</h2>
+<p class="blog-post-meta">
+<!--显示所属tags开始-->
+标签：
+{% for tag in tags %}
+<a href="../../../blogs/tag/{{ tag }}" class="more">{{ tag }}</a>&nbsp;&nbsp 
+{% endfor %}
+<!--显示所属tags结束-->
+
+<!--显示所属分类开始-->
+分类：
+<a href="../../../blogs{{post.category.get_absolute_url}}" class="more">{{ post.category }}</a>&nbsp;&nbsp 
+<!--显示所属分类s结束--></p>
+
+            
+
+            <p>{{ post.content|safe }}</p>
+
+
+
+<p class="blog-post-meta">{{ post.pub_date|date:"Y年m月d日 D H:i" }}</p>
+
+
+
+<p>*** 转载请注明本文地址：<a href="../../../blogs{{ post.get_absolute_url }}" >http://zhangzhaojun.sinaapp.com/blogs{{ post.get_absolute_url }}</a> ***</p>
+            <p>{% if upid != 0 %}上一篇：<a href="../../../blogs{{ upblog.get_absolute_url }}" >{{ upblog.title }}</a>{% endif %}<br />
+                                {% if nextid != 0 %}下一篇：<a href="../../../blogs{{ nextblog.get_absolute_url }}" >{{ nextblog.title }}</a>{% endif %}</p>
+          </div>
+
+<!-- /.blog-post -->
+<!-- JiaThis Button BEGIN -->
+<div class="jiathis_style_32x32">
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_tqq"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a href="http://www.jiathis.com/share?uid=1911680" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+</div>
+<script type="text/javascript">
+var jiathis_config = {data_track_clickback:'true'};
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1396335698244324" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+{% load mptt_tags %}
+<!--显示树形评论--><br />
+
+<a name="comments">&nbsp</a><p id="commentlist"><h3>评论列表：</h3></p>
+
+<ul class="ulcomments">
+    {% recursetree nodes %}
+        <!--<li class="licomments">-->
+    <div id="divcomments" >
+            <div class="avatar">
+
+            <a name="c{{node.id}}">&nbsp</a><IMG src="{% gravatar_url node.e_mail %}">
+            </div>
+            <div class="commentheader" style="word-wrap:break-word;white-space:normal;">
+            {{ node.c_author }}：{{ node.content }}
+            </div>
+            <div class="commenttime">
+            <span class="fc">{{ node.pub_date|date:"Y年m月d日 D H:i" }}</span>
+            {% if node.get_level < 4 %}
+            <a href="#tosomeone" name="{{ node.c_author }}" id="{{ node.id }}">回复</a>
+             </div>
+            {% endif %}
+
+
+            {% if not node.is_leaf_node %}
+                <ul class="children">
+                    {{ children }}
+                </ul>
+            {% endif %}
+     
+         <!--</li>-->
+     </div>
+    {% endrecursetree %}
+
+</ul>
+
+<!--显示树形评论结束-->
+
+<p id="tosomeone"><h2>发表评论：</h2></p><br />
+<form action="../../../blogs/postcomment/" method="post">{% csrf_token %}
+            {{ form.as_p }}
+
+            <input type="hidden" name="blog_id" value="{{ post.id }}" />
+            <input type="hidden" name="parent_id" id="parent_id" value="" /> {# <-- parent id goes here #}
+            <input type="submit" value="发表评论" /><input type="reset" id="cancel" value="取消评论" /></p>
+        </form>
+
+        </div><!-- /.blog-main -->
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module">
+            <h4>关注博客</h4>
+            <ol class="list-unstyled">
+              <li>订阅我的博客：<a href="latest/feed/" target="_blank"><img src="{% static 'zjblog/mobile/style/images/rss.gif' %}" alt="订阅我的博客"></a></li>
+              <li>关注新浪微博：<a href="http://weibo.com/u/1050994347" target="_blank"><img src="{%static 'zjblog/mobile/style/images/sub_sina.gif' %}" alt="关注新浪微博"></a></li>
+              
+            </ol>
+          </div>
+
+          
+          <div class="sidebar-module">
+            <h4>相关文章</h4>
+            <ol class="list-unstyled">
+            {% for article in similar %}
+              <li><a href="../../../blogs{{article.get_absolute_url}}">{{ article.title }}</a></li>
+            {% endfor %}             
+            </ol>
+          </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    <div class="blog-footer">
+      <p>{{base_information.copyrightby}}. Powered by <a href="http://zhangzhaojun.sinaapp.com">zjblog</a>.</p>
+      <p>
+        <a href="../../../blogs{{ post.get_absolute_url }}">向上</a>
+      </p>
+    </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="{% static 'zjblog/mobile/js/docs.min.js' %}"></script>
+  
+
+</body></html>

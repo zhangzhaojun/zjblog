@@ -1,0 +1,10 @@
+# -*- coding: utf-8 -*-
+from django.contrib.comments.models import Comment
+from django.contrib.comments.signals import comment_was_posted
+from sae.mail import send_mail
+
+def commented_to_email(sender, comment, request, **kwargs):
+    # 请自行设置下面的邮件地址，yyy为收件箱地址，xxx为发件箱地址，pwd为发件箱密码
+    send_mail('397987442@qq.com',u'新的评论',u'您的博客上的文章有新的评论了，快去看看吧！',('smtp.sina.com',25,'fromsinaapp@sina.com','i2345g',False))
+    
+comment_was_posted.connect(commented_to_email, sender=Comment)

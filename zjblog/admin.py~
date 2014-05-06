@@ -1,0 +1,17 @@
+# -*- coding: utf-8 -*-
+from zjblog.models import Blog, Category, FriendLink, BaseInformation, ZComments
+from django.contrib import admin
+from django_summernote.admin import SummernoteModelAdmin
+
+class BlogAdmin(SummernoteModelAdmin):
+	fields = ['title', 'describe', 'content', 'smallimage', 'pub_date', 'category', 'tags', 'hotcount', 'commentcount']
+
+class BIAdmin(SummernoteModelAdmin):
+	fields = ['title', 'keywords', 'description', 'ico_url', 'log_url', 'blog_name', 'mark', 'content', 'copyrightby', 'my_template']
+
+#注册需要后台管理的类        
+admin.site.register(Blog, BlogAdmin)
+admin.site.register(Category)
+admin.site.register(FriendLink)
+admin.site.register(BaseInformation, BIAdmin)
+admin.site.register(ZComments)

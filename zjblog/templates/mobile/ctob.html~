@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+
+{% load staticfiles %}
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{base_information.description}}">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="{{base_information.ico_url}}">
+
+    <title>{{base_information.title}}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'zjblog/mobile/style/blog.css' %}" rel="stylesheet">
+
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  <style id="holderjs-style" type="text/css"></style></head>
+
+  <body>
+
+    <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item active" href="/">主页</a>{% for category in category_list %}
+          <a class="blog-nav-item" href="../../../blogs{{ category.get_absolute_url }}">{{ category.title }}</a>{% endfor %}
+          
+        </nav>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="blog-header">
+      <img src="{% static 'zjblog/mobile/style/images/img03.gif' %}" class="img-responsive" style="float:left">
+        <h1 class="blog-title">{{ base_information.blog_name }}</h1>
+        <p class="lead blog-description">——{{ base_information.mark }}</p>
+        
+      </div>
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+{% for cblog in object_list %}
+          <div class="blog-post">
+            <h2 class="blog-post-title"><a href="../../../blogs{{ cblog.get_absolute_url }}">{{ cblog.title }}</a></h2>
+            <p class="blog-post-meta">{{ cblog.pub_date|date:"Y年m月d日 D H:i" }}</p>
+
+            <p>{{ cblog.describe|safe }}...</p>
+            <a class="btn btn-default" href="../../../blogs{{ cblog.get_absolute_url }}" role="button">继续阅读({{ cblog.hotcount }})</a>
+            <a class="btn btn-default" href="../../../blogs{{ cblog.get_absolute_url }}#comments" role="button">评论({{ cblog.commentcount }})</a>
+          </div>
+{% endfor %}
+<!-- /.blog-post -->
+
+          
+<!--分页代码-->
+<ul class="pager">
+{% if is_paginated %}
+<li><a href="/">首页</a></li>
+    {% if page_obj.has_next %}
+        {% if page_obj.has_previous %}
+           <li><a href="../../../blogs/category/{{ cid }}/?page={{ page_obj.previous_page_number }}">上一页</a></li> 
+           <li><a href="../../../blogs/category/{{ cid }}?page={{ page_obj.next_page_number }}">下一页</a></li>
+        {% else %}
+        <li><a href="../../../blogs/category/{{ cid }}?page={{ page_obj.next_page_number }}">下一页</a></li>
+        {% endif %}
+    {% else %}
+        {% if page_obj.has_previous %}
+        <li><a href="../../../blogs/category/{{ cid }}?page={{ page_obj.previous_page_number }}">上一页</a></li>
+        {% else %}
+        {% endif %}
+    {% endif %}
+第{{ page_obj.number }}页，共{{ page_obj.paginator.num_pages }}页
+{% else %}
+{% endif %}
+</ul>
+<!--分页代码结束-->
+
+        </div><!-- /.blog-main -->
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module">
+            <h4>关注博客</h4>
+            <ol class="list-unstyled">
+              <li>订阅我的博客：<a href="../../latest/feed/" target="_blank"><img src="{% static 'zjblog/mobile/style/images/rss.gif' %}" alt="订阅我的博客"></a></li>
+              <li>关注新浪微博：<a href="http://weibo.com/u/1050994347" target="_blank"><img src="{% static 'zjblog/mobile/style/images/sub_sina.gif' %}" alt="关注新浪微博"></a></li>
+              
+            </ol>
+          </div>
+
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>标签云集</h4>
+            <p>{% for tag in tag_list %}
+               <a href="../../../blogs/tag/{{tag}}">{{ tag }}</a>
+               {% endfor %}</p>
+          </div>
+          <div class="sidebar-module">
+            <h4>日志分类</h4>
+            <ol class="list-unstyled">
+            {% for category in category_list %}
+              <li><a href="../../../blogs{{category.get_absolute_url}}">{{category.title}}</a></li>
+            {% endfor %}             
+            </ol>
+          </div>
+          <div class="sidebar-module">
+            <h4>网站链接</h4>
+            <ol class="list-unstyled">
+            {% for fl in fls %}
+              <li><a href="{{ fl.url }}" target="_blank">{{ fl.title }}</a></li>
+            {% endfor %}
+            </ol>
+          </div>
+          <div class="sidebar-module">
+            <h4>最新评论</h4>
+            <ol class="list-unstyled">
+            {% for rc in recent_comment %}
+              <li><a href="../../../blogs/blog/{{rc.r_blog.id}}/#c{{rc.id}}" target="_blank">{{rc.c_author}}：{{rc.content|slice:":20"}}</a></li>
+            {% endfor %}
+            </ol>
+          </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    <div class="blog-footer">
+      <p>{{base_information.copyrightby}}. Powered by <a href="http://zhangzhaojun.sinaapp.com">zjblog</a>.</p>
+      <p>
+        <a href="../../../blogs/category/{{ cid }}?page={{ page_obj.number }}">向上</a>
+      </p>
+    </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="{% static 'zjblog/mobile/js/docs.min.js' %}"></script>
+  
+
+</body></html>
